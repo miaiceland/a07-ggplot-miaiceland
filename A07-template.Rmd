@@ -107,22 +107,30 @@ You can use [Figure 18.3](https://dtkaplan.github.io/DataComputingEbook/project-
 
 ```{r}
 ### Your Code Here
+ggplot(data = Trips) + 
+  geom_density( aes(x = lubridate::yday(sdate)), fill = "gray") +
+  xlab("Day of the Year") +
+  ylab("Density")
 
 ```
 
 
-My observations here..... 
+The data was collected during the winter time of the year; only days 270 through 365 were recorded. Bikes were most used during the month of October or between days 295 and 300.
 
 
 ### Day of Week
 
 ```{r}
 ### Your Code Here
+ggplot(data = Trips) + 
+  geom_density( aes(x = lubridate::wday(sdate)), fill = "gray") +
+  xlab("Day of the Week") +
+  ylab("Density")
 
 ```
 
 
-My observations here..... 
+The bikes are used frequently everyday of the week. The big dips indicate nighttime when bikes are less frequently used because most people are sleeping. Day 5 and 6 are when the bikes are used the most and day 7 and 1 is when the bikes are used the least.
 
 
 
@@ -130,11 +138,15 @@ My observations here.....
 
 ```{r}
 ### Your Code Here
+ggplot(data = Trips) + 
+  geom_density( aes(x = lubridate::hour(sdate)), fill = "gray") +
+  xlab("Hour of the Day") +
+  ylab("Density")
 
 ```
 
 
-My observations here..... 
+Again, the hours 0 through 5 is when the bikes are used the least because 12am to 5am is nighttime (when people are sleeping). The bikes are used the most during 17:30 (5:30pm) and a smaller spike at 8am. 
 
 
 
@@ -142,11 +154,15 @@ My observations here.....
 
 ```{r}
 ### Your Code Here
+ggplot(data = Trips) + 
+  geom_density( aes(x = lubridate::minute(sdate)), fill = "gray") +
+  xlab("Minute of the Hour") +
+  ylab("Density")
 
 ```
 
 
-My observations here..... 
+The minute of the hour graph does not tell me much. There are slight ripples in the graph but for the most part, the bikes are used throughout the hour. 
 
 
 ## Question 3: Grouping
