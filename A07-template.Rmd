@@ -1,7 +1,7 @@
 ---
 title: "A07- ggplot"
-author: "YOUR NAME"
-date: "DATE"
+author: "Mia Iceland"
+date: "June 9, 2023"
 output: html_notebook
 ---
 
@@ -56,7 +56,7 @@ Time/dates are typically stored as a special kind of number: a **POSIX** date.
 ```{r}
 Trips %>%
   ggplot(aes(x = sdate)) +
-  geom_density(fill = "gray", color = NA)
+  geom_density(fill = "gray", color = NA) 
 ```
 
 
@@ -69,7 +69,11 @@ When you make your plot, you will likely find that the axis range is being set b
 
 ```{r}
 ### Your code here
-
+  
+ggplot(data = Trips) + 
+  geom_boxplot( aes(x = client, y = dur <- as.numeric(edate - sdate)/60)) +
+  ylim(0,60) +
+  ylab("dur/60")
 
 ```
 
