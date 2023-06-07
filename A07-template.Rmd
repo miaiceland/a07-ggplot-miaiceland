@@ -1,0 +1,232 @@
+---
+title: "A07- ggplot"
+author: "YOUR NAME"
+date: "DATE"
+output: html_notebook
+---
+
+## Bicycle Sharing
+
+Capital BikeShare is a bicycle-sharing system in Washington, D.C. At any of about 400 stations, a registered user can unlock and check out a bicycle. After use, the bike can be returned to the same station or any of the other stations.
+
+Such sharing systems require careful management. There need to be enough bikes at each station to satisfy the demand, and enough empty docks at the destination station so that the bikes can be returned. At each station, bikes are checked out and are returned over the course of the day. An imbalance between bikes checked out and bikes returned calls for the system administration to truck bikes from one station to another. This is expensive.
+
+In order to manage the system, and to support a smart-phone app so that users can find out when bikes are available, Capital BikeShare collects real-time data on when and where each bike is checked out or returned, how many bikes and empty docks there are at each station. Capital BikeShare publishes the station-level information in real time. The organization also publishes, at the end of each quarter of the year, the historical record of each bike rental in that time.
+
+You can access the data from the Capital Bikeshare web site. Doing this requires some translation and cleaning, skills that are introduced in Chapter 16. For this project, however, already translated and cleaned data are provided in the form of two data tables:
+
+- `Stations` giving information about location of each of the stations in the system.
+- `Trips` is a random subset of 10,000 trips from the full quarterly data, giving the rental history over the last quarter of 2014 (Q4).
+
+
+```{r}
+library(tidyverse)
+
+station_url <- "https://mdbeckman.github.io/dcSupplement/data/DC-Stations.csv"
+Stations <- readr::read_csv(station_url)
+    
+trip_url <- "https://mdbeckman.github.io/dcSupplement/data/Trips-History-Data-2014-Q4-Small.rds"
+Trips <- readRDS(gzcon(url(trip_url)))
+```
+
+
+In this activity, you’ll work with just a few variables:
+
+From `Stations`:
+
+- the latitude (`lat`) and longitude (`long`) of the bicycle rental station
+- `name`: the station’s name
+
+
+From Trips: 
+
+- `sstation`: the name of the station where the bicycle was checked out.
+- `estation`: the name of the station to which the bicycle was returned.
+- `client`: indicates whether the customer is a "regular" user who has paid a yearly membership fee, or a "casual" user who has paid a fee for five-day membership.
+- `sdate`: the time and date of check-out
+- `edate`: the time and date of return
+
+(Notice that the location and time variables start with an “s” or an “e” to indicate whether the variable is about the **s**tart of a trip or the **e**nd of a trip.)
+
+
+Time/dates are typically stored as a special kind of number: a **POSIX** date. 
+
+**POSIX** date: A representation of date and time of day that facilitates using dates in the same way as numbers, e.g. to find the time elapsed between two dates. You can use `sdate` and `edate` in the same way that you would use a number. For instance, the figure below shows the distribution of times that bikes were checked out.
+
+```{r}
+Trips %>%
+  ggplot(aes(x = sdate)) +
+  geom_density(fill = "gray", color = NA)
+```
+
+
+## Question 1: How Long?  
+
+Make a box-and-whisker plot, like Figure [18.2 of the Project: Bicycle Sharing](https://dtkaplan.github.io/DataComputingEbook/project-bicycle-sharing.html#fig:box-whisker-bike) showing the distribution of the duration of rental events, broken down by the client type. The duration of the rental can be calculated as `as.numeric(edate - sdate)`. The units will be in either hours, minutes, or seconds. It should not be much trouble for you to figure out which one.
+
+When you make your plot, you will likely find that the axis range is being set by a few outliers. These may be bikes that were forgotten. Arrange your scale to ignore these outliers, or filter them out.
+
+
+```{r}
+### Your code here
+
+
+```
+
+
+## Question 2: When are bikes used?
+
+The `sdate` variable in Trips indicates the date and time of day that the bicycle was checked out of the parking station. `sdate` is stored as a special variable type that includes detailed information about the date and time. 
+
+Often, you will want discrete components of a date, for instance:
+
+
+
+|Date Component                         |	Function (`lubridate` package)|
+|---------------------------------------|-----------------------------|
+| Day of the year (1-365)              	| `lubridate::yday(sdate)`	  | 
+| Day of the week (Sunday to Saturday)	| `lubridate::wday(sdate)`	  | 
+| Hour of the day		                    | `lubridate::hour(sdate)`	  | 
+| Minute in the hour	                  | `lubridate::minute(sdate)`	| 
+
+Create **histograms or density plots** for bike use over the following discrete time periods. For each plot, provide 2-3 sentences describing your observations. 
+
+1. day of the year (1 to 365)
+2.  day of the week (Sunday to Saturday)
+3.  hour of the day (0 to 24)
+4.  minute in the hour (0 to 60)
+
+You can use [Figure 18.3](https://dtkaplan.github.io/DataComputingEbook/project-bicycle-sharing.html#fig:bikes-over-hours) or [Figure 18.4](https://dtkaplan.github.io/DataComputingEbook/project-bicycle-sharing.html#fig:bike-hour-count) as examples.
+
+
+### Day of Year
+
+```{r}
+### Your Code Here
+
+```
+
+
+My observations here..... 
+
+
+### Day of Week
+
+```{r}
+### Your Code Here
+
+```
+
+
+My observations here..... 
+
+
+
+### Hour of Day
+
+```{r}
+### Your Code Here
+
+```
+
+
+My observations here..... 
+
+
+
+### Minute of Hour
+
+```{r}
+### Your Code Here
+
+```
+
+
+My observations here..... 
+
+
+## Question 3: Grouping
+
+Group the bike rentals by three variables: hour of the day, day of the week, and client type. Find the total number of events in each grouping and plot this count versus hour. Use the group aesthetic to represent one of the other variables and faceting to represent the other. Comment on any general trends you see.
+
+```{r}
+### My Code here
+
+```
+
+My comments here.....
+
+
+## Question 4: How Far? 
+
+
+Our goal is to find the distance between each pair of stations. You know the position from the lat and long variables in `Stations`. This is enough information to find the distance. The calculation has been implemented in the `haversine()` function. We can import the `haversine()` function using the following command. 
+
+```{r}
+source("https://mdbeckman.github.io/dcSupplement/R/haversine.R")
+```
+
+
+`haversine()` is a transformation function. To use it, create a data table where a case is a pair of stations and there are variables for the latitude and longitude of the starting station and the ending station. To do this, join the Station data to itself. The following statements show how to create appropriately named variables for joining.
+
+
+```{r}
+Simple <-
+  Stations %>%
+  select(name, lat, long) %>%
+  rename(sstation = name)
+
+Simple2 <-
+  Simple %>%
+  rename(estation = sstation, lat2 = lat, long2 = long)
+
+```
+
+Look at the `head()` of `Simple` and `Simple2` and make sure you understand how they are related to `Stations.`
+
+
+The joining of `Simple` and `Simple2` should match every station to every other station. Since a ride can start and end at the same station, it also makes sense to match each station to itself. This sort of matching does not make use of any matching variables; everything is matched to everything else. This is called a **full outer join**. See Lecture L09 to read more about joins. Note, we can also use the `merge()` function for full outer joins. See the help file for more details.  
+
+
+We perform the full outer join and then use `haversine()` to compute the distance between each pair of stations.
+
+
+```{r}
+#full outer join
+StationPairs <- merge(Simple, Simple2, by = NULL)
+
+#calculating distances
+PairDistances <-
+  StationPairs %>%
+  mutate(distance = haversine(lat, long, lat2, long2)) %>%
+  select(sstation, estation, distance)
+
+```
+
+
+Once you have `PairDistances`, you can join it with `Trips` to calculate the start-to-end distance of each trip. An `inner_join()` is appropriate for finding the distance of each ride.
+
+Display the distribution of the ride distances of the rides. Compare it to the distances between pairs of stations. Are they similar? Why or why not?
+
+Our goal here is to recreate [Figure 18.5](https://dtkaplan.github.io/DataComputingEbook/project-bicycle-sharing.html#fig:bike-hour-count). For this assignment, it is sufficient to make each density on its own plot. There is 1 point of extra credit if you can make the two densities on the same plot. 
+
+
+
+```{r}
+### My code here
+
+```
+
+
+
+
+#### Extra Credit: Joining and Variable Names in R
+
+Look at the variables in `Stations` and `Trips` and explain why `Simple` and `Simple2` were given different variable names for the station. 
+
+Optional Extra credit answer here.....
+
+
+
+
+
