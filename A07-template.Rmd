@@ -172,9 +172,16 @@ Group the bike rentals by three variables: hour of the day, day of the week, and
 ```{r}
 ### My Code here
 
+ggplot(data = Trips) + 
+  geom_histogram( aes(x = lubridate::hour(sdate), color = client)) + 
+  xlab("Hour of the Day") +
+  ylab("Count") +
+  facet_wrap(~ lubridate::wday(sdate))
+  
+
 ```
 
-My comments here.....
+I have found that the majority of people that use the rental bikes are registered than guests. Also, each day of the week, there are about 4 waves in which the bikes are used at a high frequency. The busiest day to rent a bike is day 2,5 and 6 of the week. 
 
 
 ## Question 4: How Far? 
@@ -245,8 +252,6 @@ Our goal here is to recreate [Figure 18.5](https://dtkaplan.github.io/DataComput
 Look at the variables in `Stations` and `Trips` and explain why `Simple` and `Simple2` were given different variable names for the station. 
 
 Optional Extra credit answer here.....
-
-
 
 
 
