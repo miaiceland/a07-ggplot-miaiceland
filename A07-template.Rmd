@@ -242,6 +242,15 @@ Our goal here is to recreate [Figure 18.5](https://dtkaplan.github.io/DataComput
 ```{r}
 ### My code here
 
+Trip_Distance <-
+  Trips %>%
+  inner_join(PairDistances, join_by(sstation, estation))
+
+ggplot(data = Trip_Distance) + 
+  geom_density( aes(x= distance)) + 
+  xlab("Trip Distance (km)") +
+  ylab("density")
+
 ```
 
 
@@ -251,7 +260,5 @@ Our goal here is to recreate [Figure 18.5](https://dtkaplan.github.io/DataComput
 
 Look at the variables in `Stations` and `Trips` and explain why `Simple` and `Simple2` were given different variable names for the station. 
 
-Optional Extra credit answer here.....
 
-
-
+Simple and Simple2 had different variable names for latitude and longitude even though they are the same values because of the haversine() function. The haversine() function finds the distance between 2 locations using their latitude and longitude. Because we want to find the distance between every location (including the distance from itself to itself) it would be the least confusing to the computer if we labeled the locations as unique for each table. This way we can merge the tables and still have the computer see the lat and long for each table as different/unique values. 
